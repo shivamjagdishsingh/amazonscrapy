@@ -1,0 +1,14 @@
+# new window
+scrapyd
+
+# new window
+scrapyd-deploy local
+
+
+# new window
+
+curl http://localhost:6800/schedule.json -d project=amazonscrapy -d spider=amazon_spider -d seller=A1FBB9TXGHVG14
+
+
+
+A1FBB9TXGHVG14

@@ -10,7 +10,7 @@ class AmazonSpiderSpider(scrapy.Spider):
     start_urls = [
         'https://www.amazon.co.uk/s?i=merchant-items&me=A2U7Q0C25B7FU7'
     ]
-    download_delay = 1.5
+    # download_delay = 1.5
 
     # def __init__(self, seller='', **kwargs):
     #     self.start_urls = [f'https://www.amazon.co.uk/s?i=merchant-items&me={seller}']  # py36
