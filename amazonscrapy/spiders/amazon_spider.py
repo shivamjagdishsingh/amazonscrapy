@@ -8,9 +8,9 @@ class AmazonSpiderSpider(scrapy.Spider):
     name = 'amazon_spider'
 
     start_urls = [
-        'https://www.amazon.co.uk/s?i=merchant-items&me=A2U7Q0C25B7FU7'
+        'https://www.amazon.co.uk/s?i=merchant-items&me=A141KPLESCIJJT'
     ]
-    # download_delay = 1.5
+    download_delay = 1.5
 
     # def __init__(self, seller='', **kwargs):
     #     self.start_urls = [f'https://www.amazon.co.uk/s?i=merchant-items&me={seller}']  # py36
@@ -36,27 +36,67 @@ class AmazonSpiderSpider(scrapy.Spider):
         yield scrapy.Request(next_page_link, callback=self.parse)
 
     def parse_link(self, response):
+        # try:
+        items = AmazonscrapyItem()
         try:
-            items = AmazonscrapyItem()
-
-            items['imagelink'] = response.css('#landingImage::attr(src)').extract_first().replace('\n', '')
-            items['name'] = response.css("#productTitle").css('::text').extract_first().replace('\n', '').replace('  ',
-                                                                                                                  '')
-            items['price'] = response.css('#priceblock_saleprice').css('::text').extract_first()
-            if items['price'] is None:
-                items['price'] = response.css('#priceblock_ourprice').css('::text').extract_first()
-            items['brand'] = response.css('#bylineInfo').css('::text').extract_first()
-
-            items['productlink'] = response.url
-            items['datetime'] = datetime.datetime.now()
-            items['stars'] = response.css('.average_customer_reviews .a-icon-alt::text').get()
-            items['ratings'] = response.css('.average_customer_reviews .a-link-normal::text').get()
-            items['asin'] = response.css('.col2 tr:nth-child(1) .value::text').get()
-            items['rank1'] = response.css('#SalesRank .value::text').get().replace("\n", '').replace('(', '')
-            items['rank2'] = ' '.join(
-                response.css('#SalesRank .zg_hrsr_rank::text,#SalesRank .zg_hrsr_ladder a::text').extract())
-
-            return items
+            imagelink = response.xpath('//div[@id="imgTagWrapperId"]/img/@data-a-dynamic-image').get()
 
         except:
-            print("item was old")
+            imagelink = response.xpath('//div[@id="imgTagWrapperId"]/img/@src').get()
+
+        if imagelink:
+            items['imagelink'] = [key for key, value in eval(imagelink).items()][0]
+        else:
+            items['imagelink'] = 'None'
+
+        name = response.css("#productTitle").css('::text').extract_first()
+        if name:
+            items['name'] = name.replace('\n', '').replace('  ', '')
+        else:
+            items['name'] = 'None'
+        price1 = response.css('#priceblock_saleprice').css('::text').extract_first()
+        price2 = response.css('#priceblock_ourprice').css('::text').extract_first()
+
+        if price1:
+            items['price'] = price1
+        elif price2:
+            items['price'] = price2
+        else:
+            items['price'] = 'None'
+        brand = response.css('#bylineInfo').css('::text').extract_first()
+        if brand:
+            items['brand'] = brand
+        else:
+            items['brand'] = 'None'
+        items['productlink'] = response.url
+        items['datetime'] = datetime.datetime.now()
+        stars = response.css('.average_customer_reviews .a-icon-alt::text').get()
+        if stars:
+            items['stars'] = stars
+        else:
+            items['stars'] = 'None'
+        ratings = response.css('.average_customer_reviews .a-link-normal::text').get()
+        if ratings:
+            items['ratings'] = ratings
+        else:
+            items['ratings'] = 'None'
+        asin = response.css('.col2 tr:nth-child(1) .value::text').get()
+        if asin:
+            items['asin'] = asin
+        else:
+            items['asin'] = 'None'
+        rank1 = response.css('#SalesRank .value::text').get()
+        if rank1:
+            items['rank1'] = rank1.replace("\n", '').replace('(', '')
+        else:
+            items['rank1'] = 'None'
+        rank2 = ' '.join(
+            response.css('#SalesRank .zg_hrsr_rank::text,#SalesRank .zg_hrsr_ladder a::text').extract())
+        if rank2:
+            items['rank2'] = rank2
+        else:
+            items['rank2'] = 'None'
+        return items
+
+        # except:
+        #     print("item was old")

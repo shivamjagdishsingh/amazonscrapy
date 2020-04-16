@@ -24,6 +24,8 @@ ROBOTSTXT_OBEY = True
 
 # PROXY_POOL_ENABLED = True
 
+RANDOM_UA_PER_PROXY = True
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 16
 
