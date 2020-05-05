@@ -6,7 +6,7 @@ import datetime
 
 class AmazonSpiderSpider(scrapy.Spider):
     name = 'amazon_spider'
-
+    allowed_domains = []
     start_urls = [
         'https://www.amazon.co.uk/s?i=merchant-items&me=A141KPLESCIJJT'
     ]
@@ -15,6 +15,13 @@ class AmazonSpiderSpider(scrapy.Spider):
     # def __init__(self, seller='', **kwargs):
     #     self.start_urls = [f'https://www.amazon.co.uk/s?i=merchant-items&me={seller}']  # py36
     #     super().__init__(**kwargs)  # python3
+
+    # def __init__(self, **kwargs):
+    #     domains = ['B085L8BTXQ','B073B5W7MJ']
+    #     # for line in open('domains.txt', 'r').readlines():
+    #     for line in domains:
+    #         self.allowed_domains.append(line)
+    #         self.start_urls.append('https://www.amazon.co.uk/dp/%s' % line)
 
     def parse(self, response):
 
